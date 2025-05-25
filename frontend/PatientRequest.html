@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Patient Requests</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e0101;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #ffcc00;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      text-transform: uppercase;
+    }
+    .table-container {
+      width: 100%; max-width: 800px;
+      background: rgba(0,0,0,0.4);
+      padding: 20px; border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      text-align: left;
+      word-wrap: break-word;
+    }
+    th {
+      background: rgba(255,255,255,0.1);
+      font-weight: bold;
+    }
+    tr:hover { background: rgba(255,255,255,0.1); }
+    button {
+      padding: 6px 12px; border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold;
+    }
+    button.accept {
+      background: #00d4a6; color: #000;
+    }
+    button.reject {
+      background: #dd4353; color: #fff;
+    }
+    button:disabled {
+      opacity: 0.6; cursor: not-allowed;
+    }
+    .message {
+      margin-top: 15px; font-size: 18px; color: #dd4353;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Patient Requests</h1>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:5%;">#</th>
+          <th style="width:35%;">Name</th>
+          <th style="width:35%;">Email</th>
+          <th style="width:12%;">Accept</th>
+          <th style="width:13%;">Reject</th>
+        </tr>
+      </thead>
+      <tbody id="requestsBody">
+        <!-- rows go here -->
+      </tbody>
+    </table>
+    <p class="message" id="message"></p>
+  </div>
+
+  <script>
+    const API = "http://localhost:8080";
+
+    // Load incoming patient requests
+    async function fetchRequests() {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) return window.location.href = "login.html";
+
+      try {
+        const resp = await fetch(`${API}/get-patient-requests`, {
+          headers: { "Authorization": token }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        if (!resp.ok) throw new Error("Could not load requests");
+
+        const list = await resp.json();
+        const tbody = document.getElementById("requestsBody");
+        tbody.innerHTML = "";
+
+        list.forEach((r, i) => {
+          const row = document.createElement("tr");
+          row.dataset.email = encodeURIComponent(r.email);
+
+          row.innerHTML = `
+            <td>${i+1}</td>
+            <td>${r.name}</td>
+            <td>${r.email}</td>
+            <td><button class="accept">Accept</button></td>
+            <td><button class="reject">Reject</button></td>
+          `;
+
+          // wire up accept
+          row.querySelector(".accept").addEventListener("click", e => {
+            e.stopPropagation();
+            handleAccept(r.email, row);
+          });
+          // wire up reject
+          row.querySelector(".reject").addEventListener("click", e => {
+            e.stopPropagation();
+            handleReject(r.email, row);
+          });
+
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        document.getElementById("message").textContent = err.message;
+      }
+    }
+
+    // Accept a request
+    async function handleAccept(email, row) {
+      const btn = row.querySelector(".accept");
+      btn.disabled = true;
+      btn.textContent = "Adding…";
+      const token = localStorage.getItem("jwtToken");
+
+      try {
+        const resp = await fetch(`${API}/add-patient?patientEmail=${encodeURIComponent(email)}`, {
+          method: "POST",
+          headers: { "Authorization": token }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        const dto = await resp.json();
+        alert(`✅ Added ${dto.name} successfully!`);
+        row.remove();
+      } catch (err) {
+        alert("Error: " + err.message);
+        btn.disabled = false;
+        btn.textContent = "Accept";
+      }
+    }
+
+    // Reject a request
+    async function handleReject(email, row) {
+      const btn = row.querySelector(".reject");
+      btn.disabled = true;
+      btn.textContent = "Rejecting…";
+      const token = localStorage.getItem("jwtToken");
+
+      try {
+        const resp = await fetch(`${API}/reject-patient?patientEmail=${encodeURIComponent(email)}`, {
+          method: "DELETE",
+          headers: { "Authorization": token }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        const msg = await resp.text();
+        alert("❌ " + msg);
+        row.remove();
+      } catch (err) {
+        alert("Error: " + err.message);
+        btn.disabled = false;
+        btn.textContent = "Reject";
+      }
+    }
+
+    window.onload = fetchRequests;
+  </script>
+
+</body>
+</html>

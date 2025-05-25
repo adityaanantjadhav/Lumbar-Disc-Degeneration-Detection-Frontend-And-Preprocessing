@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Patient Details</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e0101;
+      color: #fff;
+      display: flex; flex-direction: column;
+      align-items: center; padding: 20px;
+    }
+    .header {
+      margin-bottom: 20px; text-align: center;
+    }
+    .header h1 {
+      font-size: 32px; color: #ffcc00;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    }
+    .info-box {
+      background: rgba(0,0,0,0.4);
+      padding: 20px; border-radius: 8px;
+      margin-bottom: 30px; width: 100%;
+      max-width: 600px;
+    }
+    .info-box p {
+      margin: 8px 0; font-size: 18px;
+    }
+    .info-box button {
+      margin-top: 12px; padding: 8px 16px;
+      background: #dd4353; color: #fff;
+      border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold;
+    }
+    .table-container {
+      width: 100%; max-width: 800px;
+      background: rgba(0,0,0,0.4);
+      padding: 20px; border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    th {
+      background: rgba(255,255,255,0.1); font-weight: bold;
+    }
+    tbody tr { cursor: pointer; transition: background 0.2s; }
+    tbody tr:hover { background: rgba(255,255,255,0.1); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Patient Details</h1>
+  </div>
+
+  <div class="info-box" id="patientInfo">
+    <!-- Filled by JS -->
+    <p>Loading patient info…</p>
+  </div>
+
+  <div class="table-container">
+    <h2 style="margin-bottom: 10px; color: #ffcc00;">Previous Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:10%;">#</th>
+          <th style="width:45%;">Date</th>
+          <th style="width:45%;">Time</th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const API = "http://localhost:8080";
+    let patientId, jwt;
+
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    // load patient info
+    async function loadPatientInfo() {
+      patientId = getParam("patientId");
+      if (!patientId) return alert("No patientId provided");
+
+      jwt = localStorage.getItem("jwtToken");
+      if (!jwt) return window.location.href = "login.html";
+
+      try {
+        const resp = await fetch(`${API}/get-patient-info/${patientId}`, {
+          headers: { "Authorization": jwt }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        if (!resp.ok) throw new Error("Failed to load patient info");
+
+        const p = await resp.json();
+        const div = document.getElementById("patientInfo");
+        div.innerHTML = `
+          <p><strong>Name:</strong> ${p.name}</p>
+          <p><strong>Email:</strong> ${p.email}</p>
+          <p><strong>City:</strong> ${p.city}</p>
+          <p><strong>Pincode:</strong> ${p.pincode}</p>
+          <button id="deleteBtn">Delete Patient</button>
+        `;
+        document.getElementById("deleteBtn")
+                .addEventListener("click", deletePatient);
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // delete patient
+    async function deletePatient() {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = "Deleting…";
+      try {
+        const resp = await fetch(`${API}/remove-patient?patientEmail=${encodeURIComponent(p.email)}`, {
+          method: "DELETE",
+          headers: { "Authorization": jwt }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        const msg = await resp.text();
+        alert("✅ " + msg);
+        window.location.href = "PatientList.html"; // back to list
+      } catch (e) {
+        alert("Error: " + e.message);
+        btn.disabled = false;
+        btn.textContent = "Delete Patient";
+      }
+    }
+
+    // load previous results
+    async function loadResults() {
+      try {
+        const resp = await fetch(`${API}/get-patient-result/${patientId}`, {
+          headers: { "Authorization": jwt }
+        });
+        if (resp.status === 401) return window.location.href = "login.html";
+        if (!resp.ok) throw new Error("Failed to load results");
+
+        const arr = await resp.json();
+        const tbody = document.getElementById("resultsBody");
+        tbody.innerHTML = "";
+
+        arr.forEach((r, i) => {
+          const dt = new Date(r.timestamp);
+          const row = document.createElement("tr");
+          row.dataset.resultId = r.resultId;
+          row.innerHTML = `
+            <td>${i+1}</td>
+            <td>${dt.toLocaleDateString()}</td>
+            <td>${dt.toLocaleTimeString()}</td>
+          `;
+          row.addEventListener("click", () => {
+            window.location.href = `result.html?resultId=${row.dataset.resultId}`;
+          });
+          tbody.appendChild(row);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // initialize
+    window.onload = async () => {
+      await loadPatientInfo();
+      await loadResults();
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-image: url("static/backgroundimage.png");
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: #1e0101;
+        min-height: 100vh;
+      }
+      .container {
+        background: rgba(100, 100, 0, 0.1);
+        backdrop-filter: blur(40px);
+        padding: 36px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        max-width: 480px;
+        width: 90%;
+        margin-top: 40px;
+      }
+      .container:hover {
+        transform: translateY(-1%);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+      }
+      .container h2 {
+        margin-bottom: 20px;
+        color: #e9b3b3;
+        text-shadow: -1.5px -1.5px 0 #200101, 1.5px -1.5px 0 #200101,
+          -1.5px 1.5px 0 #200101, 1.5px 1.5px 0 #200101;
+        font-size: 24px;
+      }
+      input,
+      select {
+        width: 100%;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #00d4a6;
+        transform: scale(1.05);
+      }
+      a {
+        display: block;
+        margin-top: 15px;
+        color: #ffcc00;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <select name="role" required>
+          <option value="">Select Role</option>
+          <option value="PATIENT">Patient</option>
+          <option value="DOCTOR">Doctor</option>
+        </select>
+        <input type="number" name="pincode" placeholder="Pincode" required />
+        <input type="text" name="city" placeholder="City" required />
+        <button type="submit">Register</button>
+      </form>
+      <a href="/login.html">Already have an account? Login</a>
+    </div>
+  </body>
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+  
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      data.pincode = parseInt(data.pincode); // convert to number
+  
+      try {
+        const response = await fetch("http://localhost:8080/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (response.ok) {
+          alert("Successfully registered! Please login now.");
+          window.location.href = "/login.html";
+        } else {
+          const error = await response.text();
+          alert("Registration failed: " + error);
+        }
+      } catch (err) {
+        alert("An error occurred: " + err.message);
+      }
+    });
+  </script>
+  
+</html>
