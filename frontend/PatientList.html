@@ -44,7 +44,6 @@
       text-align: left;
     }
     tbody tr {
-      cursor: pointer;
       transition: background-color 0.2s;
     }
     tbody tr:hover {
@@ -55,10 +54,24 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       word-wrap: break-word;
     }
+    .remove-btn {
+      padding: 6px 12px;
+      background-color: #dd4353;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .remove-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
     .message {
       margin-top: 15px;
       font-size: 18px;
-      color: #dd4353;
+      color: #ffcc00;
+      text-align: center;
     }
   </style>
 </head>
@@ -73,10 +86,11 @@
       <thead>
         <tr>
           <th style="width:5%;">#</th>
-          <th style="width:25%;">Name</th>
-          <th style="width:30%;">Email</th>
-          <th style="width:20%;">Pincode</th>
-          <th style="width:20%;">City</th>
+          <th style="width:20%;">Name</th>
+          <th style="width:25%;">Email</th>
+          <th style="width:15%;">Pincode</th>
+          <th style="width:15%;">City</th>
+          <th style="width:20%;">Action</th>
         </tr>
       </thead>
       <tbody id="patientsBody">
@@ -87,26 +101,18 @@
   </div>
 
   <script>
+    const apiBase = "http://localhost:8080";
+
     async function fetchPatients() {
       const token = localStorage.getItem("jwtToken");
-      if (!token) {
-        window.location.href = "login.html";
-        return;
-      }
+      if (!token) return window.location.href = "login.html";
 
       try {
-        const resp = await fetch("http://localhost:8080/get-patients", {
-          method: "GET",
+        const resp = await fetch(`${apiBase}/get-patients`, {
           headers: { "Authorization": token }
         });
-
-        if (resp.status === 401) {
-          window.location.href = "login.html";
-          return;
-        }
-        if (!resp.ok) {
-          throw new Error("Failed to load patients");
-        }
+        if (resp.status === 401) return window.location.href = "login.html";
+        if (!resp.ok) throw new Error("Failed to load patients");
 
         const patients = await resp.json();
         const tbody = document.getElementById("patientsBody");
@@ -114,19 +120,50 @@
 
         patients.forEach((p, i) => {
           const row = document.createElement("tr");
-          row.dataset.patientId = p.id;
-
+          row.dataset.patientEmail = p.email; 
           row.innerHTML = `
             <td>${i+1}</td>
             <td>${p.name}</td>
             <td>${p.email}</td>
             <td>${p.pincode}</td>
             <td>${p.city}</td>
+            <td>
+              <button class="remove-btn">Remove</button>
+            </td>
           `;
 
-          row.addEventListener("click", () => {
-            const id = encodeURIComponent(row.dataset.patientId);
-            window.location.href = `PatientDetail.html?patientId=${id}`;
+          // clicking the rest of the row (not the button) goes to detail
+          row.querySelectorAll("td:not(:last-child)").forEach(cell =>
+            cell.addEventListener("click", () => {
+              const patientEmail = row.dataset.patientEmail;
+              window.location.href = `PatientDetail.html?patientEmail=${encodeURIComponent(patientEmail)}`;
+            })
+          );
+
+          // remove button
+          const btn = row.querySelector(".remove-btn");
+          btn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            if (!confirm("Are you sure you want to remove this patient?")) return;
+            btn.disabled = true;
+            try {
+              const res = await fetch(
+                `${apiBase}/remove-patient?patientEmail=${row.dataset.patientEmail}`,
+                {
+                  method: "DELETE",
+                  headers: { "Authorization": token }
+                }
+              );
+              if (res.status === 401) return window.location.href = "login.html";
+              if (!res.ok) throw new Error("Failed to remove patient");
+
+              // remove row & show message
+              row.remove();
+              document.getElementById("message").textContent = "Patient removed successfully.";
+            } catch (err) {
+              document.getElementById("message").textContent = "Error: " + err.message;
+              btn.disabled = false;
+            }
           });
 
           tbody.appendChild(row);

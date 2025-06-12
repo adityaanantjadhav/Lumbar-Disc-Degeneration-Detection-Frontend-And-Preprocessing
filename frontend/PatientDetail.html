@@ -86,7 +86,7 @@
 
   <script>
     const API = "http://localhost:8080";
-    let patientId, jwt;
+    let patientEmail, jwt;
 
     function getParam(name) {
       return new URLSearchParams(window.location.search).get(name);
@@ -94,17 +94,17 @@
 
     // load patient info
     async function loadPatientInfo() {
-      patientId = getParam("patientId");
-      if (!patientId) return alert("No patientId provided");
+      patientEmail = getParam("patientEmail");
+      if (!patientEmail) return alert("No patientEmail provided");
 
       jwt = localStorage.getItem("jwtToken");
       if (!jwt) return window.location.href = "login.html";
 
       try {
-        const resp = await fetch(`${API}/get-patient-info/${patientId}`, {
+        const resp = await fetch(`${API}/get-patient-info/${patientEmail}`, {
           headers: { "Authorization": jwt }
         });
-        if (resp.status === 401) return window.location.href = "login.html";
+        // if (resp.status === 401) return window.location.href = "login.html";
         if (!resp.ok) throw new Error("Failed to load patient info");
 
         const p = await resp.json();
@@ -133,7 +133,7 @@
           method: "DELETE",
           headers: { "Authorization": jwt }
         });
-        if (resp.status === 401) return window.location.href = "login.html";
+        // if (resp.status === 401) return window.location.href = "login.html";
         const msg = await resp.text();
         alert("✅ " + msg);
         window.location.href = "PatientList.html"; // back to list
@@ -147,10 +147,10 @@
     // load previous results
     async function loadResults() {
       try {
-        const resp = await fetch(`${API}/get-patient-result/${patientId}`, {
+        const resp = await fetch(`${API}/get-patient-result/${patientEmail}`, {
           headers: { "Authorization": jwt }
         });
-        if (resp.status === 401) return window.location.href = "login.html";
+        // if (resp.status === 401) return window.location.href = "login.html";
         if (!resp.ok) throw new Error("Failed to load results");
 
         const arr = await resp.json();

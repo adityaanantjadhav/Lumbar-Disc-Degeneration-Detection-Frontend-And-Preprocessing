@@ -1,365 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-powered Disc Degeneration Analysis</title>
-  <link rel="stylesheet" href="C:\yolo11\flask_app\static\styles1.css">
-  <style>
-    * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-powered Disc Degeneration Analysis</title>
+    <link rel="stylesheet" href="C:\yolo11\flask_app\static\styles1.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-body {
-font-family: 'Arial', sans-serif;
-/* height: 100vh; */
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: flex-start;
-/* background: linear-gradient(120deg, #000428, #004e92);*/
-/* background-image: url('https://t4.ftcdn.net/jpg/08/99/10/13/360_F_899101367_KNplABXUOJ0XEcXci30BGXu3NildSzrW.jpg');
+      body {
+        font-family: "Arial", sans-serif;
+        /* height: 100vh; */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        /* background: linear-gradient(120deg, #000428, #004e92);*/
+        /* background-image: url('https://t4.ftcdn.net/jpg/08/99/10/13/360_F_899101367_KNplABXUOJ0XEcXci30BGXu3NildSzrW.jpg');
 background-repeat: no-repeat;
 background-size: cover;
 color: #fff; */
-background-color: #1e0101;
-}
-
-.outerbox {
-font-family: 'Arial', sans-serif;
-height: 112vh;
-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: flex-start;
-background: 
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 70%, #1e0101), 
-    url('https://static.vecteezy.com/system/resources/previews/035/972/053/non_2x/ai-generated-human-body-with-highlighted-spine-in-x-ray-image-on-dark-background-highlighted-lower-back-pain-shown-with-a-red-holographic-spine-ai-generated-free-photo.jpg');
-background-repeat: no-repeat;
-background-size: cover;
-background-position: center;
-color: #1e0101;
-}
-
-
-.header {
-text-align: center;
-padding: 20px 0;
-background: rgba(0, 0, 0, 0.8);
-width: 100%;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-.project-title {
-font-size: 48px;
-color: #ffcc00;
-text-transform: uppercase;
-letter-spacing: 2px;
-text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-}
-
-.content-section {
-flex-grow: 1;
-display: flex;
-align-items: center;
-justify-content: center;
-width: 100%;
-position: relative;
-}
-
-@keyframes float {
-0%, 100% {
-    transform: translateY(-50%) translateX(0);
-}
-50% {
-    transform: translateY(-60%) translateX(5px);
-}
-}
-
-.container {
-background: rgba(100, 100, 0, 0.1);
-backdrop-filter: blur(40px);
-padding: 36px;
-border-radius: 15px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-text-align: center;
-transition: transform 0.3s ease, box-shadow 0.3s ease;
-max-width: 480px; 
-width: 90%;
-z-index: 2;
-transform: translateY(-15%); /* Reduced initial upward translation */
-}
-
-.container:hover {
-transform: translateY(-13%); /* Brings it back to its original position smoothly */
-box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-}
-
-
-h2 {
-background: rgba(0, 0, 0, 0.2);
-padding: 5px 5px 5px 4px;
-border-radius: 5px;
-margin-bottom: 20px;
-font-size: 24px;
-color: #e9b3b3;
-text-shadow: 
-    -1.5px -1.5px 0 #200101,  /* Top-left shadow */
-    1.5px -1.5px 0 #200101,   /* Top-right shadow */
-    -1.5px 1.5px 0 #200101,   /* Bottom-left shadow */
-    1.5px 1.5px 0 #200101;    /* Bottom-right shadow */
-}
-
-.container input[type="file"] {
-padding: 12px;
-border: 2px dashed #ccc;
-background: rgba(255, 255, 255, 0.2);
-border-radius: 8px;
-width: 100%;
-font-size: 16px;
-color: #000000;
-margin-bottom: 15px;
-transition: border-color 0.3s ease;
-cursor: pointer;
-}
-
-.container input[type="file"]:hover {
-border-color: #00ffcc;
-}
-
-.container button {
-padding: 12px 25px;
-background-color: #000000;
-color: #ffffff;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-font-size: 19px;
-font-weight: 600;
-margin-top: 10px;
-transition: transform 0.2s ease, background-color 0.3s ease;
-width: 100%;
-}
-
-.container button:hover {
-background-color: #00d4a6;
-transform: scale(1.05);
-}
-
-.message {
-margin-top: 15px;
-font-size: 20px;
-font-weight: bold;
-color: white; /* Adjust based on your background for contrast */
-text-shadow: 
-    -1px -1px 0 #000,  /* Top-left shadow */
-    1px -1px 0 #000,   /* Top-right shadow */
-    -1px 1px 0 #000,   /* Bottom-left shadow */
-    1px 1px 0 #000;    /* Bottom-right shadow */
-}
-
-
-.message.success {
-color: #7cdc92;
-}
-
-.message.error {
-color: #dd4353;
-}
-
-@media (max-width: 768px) {
-.project-title {
-    font-size: 28px;
-}
-
-.container {
-    padding: 20px;
-}
-
-.brain {
-    width: 80px;
-    height: 80px;
-}
-}
-
-
-
-
-/* new code */
-#imageResult img {
-max-width: 100%; /* Ensure the image fits within the container */
-height: 500px; /* Set a maximum height for uniformity */
-display: block;
-margin: 0 auto; /* Center the image within the container */
-object-fit: contain; /* Maintain the aspect ratio while ensuring it fits */
-border: 2px solid #fff; /* Optional: Add a border for styling */
-border-radius: 10px; /* Optional: Add rounded corners */
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: Add shadow for better aesthetics */
-}
-
-
-.output_title{
-color:rgb(215, 202, 64);
-font-size: xx-large;
-margin-bottom: 15px;
-}
-
-
-.container_output{
-border-top: 10px;
-background: rgba(255, 255, 255, 0.1);
-backdrop-filter: blur(20px);
-padding: 20px 30px 40px 30px;
-border-radius: 15px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-text-align: center;
-transition: transform 0.3s ease, box-shadow 0.3s ease;
-/* max-width: 480px;  */
-width: 60%;
-/* z-index: 2; */
-transform: translateY(-10%); /* Reduced initial upward translation */
-}
-
-.container .radios{
-color: #e8e885;
-font-size: larger;
-font-weight: 400;
-padding: 6px;
-
-label{
-    margin: 0px 55px;
-}
-}
-</style>
-</head>
-<body>
-  <div class="outerbox">
-    <header class="header">
-      <div class="title-container">
-        <h1 class="project-title">Lumbar Disc Degeneration Analysis</h1>
-      </div>
-    </header>
-    <section class="content-section">
-      <div class="brain left-brain"></div>
-      <div class="container">
-        <h2>Upload Your Lumbar MRI</h2>
-        <input type="file" id="imageInput" accept="image/*">
-  
-        <!-- Radio buttons -->
-        <div class="radios">
-          <label>
-            <input type="radio" name="viewType" value="sagittal" checked>
-            Sagittal
-          </label>
-          <label>
-            <input type="radio" name="viewType" value="axial">
-            Axial
-          </label>
-        </div>
-  
-        <button onclick="uploadImage()">Upload Here!</button>
-        <p class="message" id="message"></p>
-      </div>
-      <div class="brain right-brain"></div>
-    </section>
-    <!-- Add this inside your <body> just below the container div in content-section -->
-
-<div class="container_output" id="resultsSection">
-  <div class="output_title">Previous Results</div>
-  <table id="resultsTable" style="width: 100%; color: white; font-size: 18px; border-collapse: collapse;">
-    <thead>
-      <tr style="background-color: rgba(0, 0, 0, 0.4);">
-        <th style="padding: 10px; border-bottom: 1px solid #ccc;">Index</th>
-        <th style="padding: 10px; border-bottom: 1px solid #ccc;">Date</th>
-        <th style="padding: 10px; border-bottom: 1px solid #ccc;">Time</th>
-      </tr>
-    </thead>
-    <tbody id="resultsBody">
-      <!-- JavaScript will populate rows here -->
-    </tbody>
-  </table>
-</div>
-
-<script>
-  const userEmail = 'adityaanantjadhav@gmail.com'; // You may dynamically fetch this later
-
-  async function fetchPreviousResults() {
-    try {
-      const response = await fetch(`http://localhost:8080/get-previous-results?userEmail=${encodeURIComponent(userEmail)}`);
-      if (!response.ok) {
-        console.error('Failed to fetch previous results');
-        return;
+        background-color: #1e0101;
       }
 
-      const results = await response.json();
-      const tbody = document.getElementById('resultsBody');
-      tbody.innerHTML = '';
+      .outerbox {
+        font-family: "Arial", sans-serif;
+        height: auto;
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 70%, #1e0101),
+          url("https://static.vecteezy.com/system/resources/previews/035/972/053/non_2x/ai-generated-human-body-with-highlighted-spine-in-x-ray-image-on-dark-background-highlighted-lower-back-pain-shown-with-a-red-holographic-spine-ai-generated-free-photo.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        color: #1e0101;
+      }
 
-      results.forEach((result, index) => {
-        const dateTime = new Date(result.timestamp);
-        const date = dateTime.toLocaleDateString();
-        const time = dateTime.toLocaleTimeString();
+      .header {
+        text-align: center;
+        padding: 20px 0;
+        background: rgba(0, 0, 0, 0.8);
+        width: 100%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
+      .project-title {
+        font-size: 48px;
+        color: #ffcc00;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      }
+
+      .content-section {
+        margin-bottom: 50px;
+        /* Remove flex-grow if exists */
+        flex-grow: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        position: relative; 
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(-50%) translateX(0);
+        }
+        50% {
+          transform: translateY(-60%) translateX(5px);
+        }
+      }
+
+      .container {
+        background: rgba(100, 100, 0, 0.1);
+        backdrop-filter: blur(40px);
+        padding: 36px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        max-width: 480px;
+        width: 90%;
+        z-index: 2;
+        /* transform: translateY(-15%); Reduced initial upward translation   */
+        transform: none;
+        margin-top: 40px;
+      }
+
+      .container:hover {
+        transform: translateY(
+          -3%
+        ); /* Brings it back to its original position smoothly */
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+      }
+
+      h2 {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 5px 5px 5px 4px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #e9b3b3;
+        text-shadow: -1.5px -1.5px 0 #200101,
+          /* Top-left shadow */ 1.5px -1.5px 0 #200101,
+          /* Top-right shadow */ -1.5px 1.5px 0 #200101,
+          /* Bottom-left shadow */ 1.5px 1.5px 0 #200101; /* Bottom-right shadow */
+      }
+
+      .container input[type="file"] {
+        padding: 12px;
+        border: 2px dashed #ccc;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        width: 100%;
+        font-size: 16px;
+        color: #000000;
+        margin-bottom: 15px;
+        transition: border-color 0.3s ease;
+        cursor: pointer;
+      }
+
+      .container input[type="file"]:hover {
+        border-color: #00ffcc;
+      }
+
+      .container button {
+        padding: 12px 25px;
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 19px;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        width: 100%;
+      }
+
+      .container button:hover {
+        background-color: #00d4a6;
+        transform: scale(1.05);
+      }
+
+      .message {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white; /* Adjust based on your background for contrast */
+        text-shadow: -1px -1px 0 #000, /* Top-left shadow */ 1px -1px 0 #000,
+          /* Top-right shadow */ -1px 1px 0 #000,
+          /* Bottom-left shadow */ 1px 1px 0 #000; /* Bottom-right shadow */
+      }
+
+      .message.success {
+        color: #7cdc92;
+      }
+
+      .message.error {
+        color: #dd4353;
+      }
+
+      @media (max-width: 768px) {
+        .project-title {
+          font-size: 28px;
+        }
+
+        .container {
+          padding: 20px;
+        }
+
+        .brain {
+          width: 80px;
+          height: 80px;
+        }
+      }
+
+      /* new code */
+      #imageResult img {
+        max-width: 100%; /* Ensure the image fits within the container */
+        height: 500px; /* Set a maximum height for uniformity */
+        display: block;
+        margin: 0 auto; /* Center the image within the container */
+        object-fit: contain; /* Maintain the aspect ratio while ensuring it fits */
+        border: 2px solid #fff; /* Optional: Add a border for styling */
+        border-radius: 10px; /* Optional: Add rounded corners */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: Add shadow for better aesthetics */
+      }
+
+      .output_title {
+        color: rgb(215, 202, 64);
+        font-size: xx-large;
+        margin-bottom: 15px;
+      }
+
+      .container_output {
+        border-top: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        padding: 20px 30px 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* max-width: 480px;  */
+        width: 60%;
+        /* z-index: 2; */
+        transform: none;
+        width: 80%;
+        margin: 0 auto 50px; /* Center and add bottom margin */
+        /* Add some transparency */
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .container .radios {
+        color: #e8e885;
+        font-size: larger;
+        font-weight: 400;
+        padding: 6px;
+
+        label {
+          margin: 0px 55px;
+        }
+      }
+
+      #resultsTable tbody tr {
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      #resultsTable tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outerbox">
+      <header class="header">
+        <div class="title-container">
+          <h1 class="project-title">SPINOSCAN</h1>
+        </div>
+      </header>
+      <section class="content-section">
+        <div class="brain left-brain"></div>
+        <div class="container">
+          <h2>Upload Your Lumbar MRI</h2>
+          <input type="file" id="imageInput" accept="image/*" />
+
+          <!-- Radio buttons -->
+          <div class="radios">
+            <label>
+              <input type="radio" name="viewType" value="sagittal" checked />
+              Sagittal
+            </label>
+            <label>
+              <input type="radio" name="viewType" value="axial" />
+              Axial
+            </label>
+          </div>
+
+          <button onclick="uploadImage()">Upload Here!</button>
+          <p class="message" id="message"></p>
+        </div>
+        <div class="brain right-brain"></div>
+      </section>
+      <!-- Add this inside your <body> just below the container div in content-section -->
+
+      
+    </div>
+
+    <div class="container_output" id="resultsSection">
+        <div class="output_title"><b>Previous Results</b></div>
+        <table
+          id="resultsTable"
+          style="
+            width: 100%;
+            color: white;
+            font-size: 18px;
+            border-collapse: collapse;
+          "
+        >
+          <thead>
+            <tr style="background-color: rgba(0, 0, 0, 0.4)">
+              <th style="padding: 10px; border-bottom: 1px solid #ccc">
+                Index
+              </th>
+              <th style="padding: 10px; border-bottom: 1px solid #ccc">Date</th>
+              <th style="padding: 10px; border-bottom: 1px solid #ccc">Time</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <!-- JavaScript will populate rows here -->
+          </tbody>
+        </table>
+      </div>
+
+      <script>
+        const userEmail = "adityaanantjadhav@gmail.com"; // You may dynamically fetch this later
+
+        async function fetchPreviousResults() {
+          const token = localStorage.getItem("jwtToken");
+          try {
+            const response = await fetch(
+              `http://localhost:8080/get-previous-results`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: token,
+                },
+              }
+            );
+            if (response.status === 401) {
+              window.location.href = "/login.html"; // or wherever your login page is
+              return;
+            }
+
+            if (!response.ok) {
+              console.error("Failed to fetch previous results");
+              return;
+            }
+
+            const results = await response.json();
+            const tbody = document.getElementById("resultsBody");
+            tbody.innerHTML = "";
+
+            results.forEach((result, index) => {
+              const dateTime = new Date(result.timestamp);
+              const date = dateTime.toLocaleDateString();
+              const time = dateTime.toLocaleTimeString();
+
+              const row = document.createElement("tr");
+              // Store the result ID in a data attribute
+              row.dataset.resultId = result.resultId;
+
+              row.innerHTML = `
           <td style="padding: 10px; text-align: center;">${index + 1}</td>
           <td style="padding: 10px; text-align: center;">${date}</td>
           <td style="padding: 10px; text-align: center;">${time}</td>
         `;
-        tbody.appendChild(row);
-      });
-    } catch (error) {
-      console.error("Error fetching previous results:", error);
-    }
-  }
 
-  // Call it once when the page loads
-  window.onload = fetchPreviousResults;
-</script>
+              // Add click event listener
+              row.addEventListener("click", function () {
+                window.location.href = `result.html?resultId=${encodeURIComponent(
+                  result.resultId
+                )}`;
+              });
 
-  </div>
-  
-  <script>
-    async function uploadImage() {
-      const input = document.getElementById('imageInput');
-      const message = document.getElementById('message');
-  
-      if (input.files.length === 0) {
-        message.textContent = "Please select an image to upload.";
-        message.className = 'message error';
-        return;
-      }
-  
-      const selectedView = document.querySelector('input[name="viewType"]:checked').value;
-      const formData = new FormData();
-      formData.append('file', input.files[0]);
-      formData.append('userId', 'adityaanantjadhav@gmail.com');  // Replace with actual user if needed
-      formData.append('viewType', selectedView);
-  
-      try {
-        const response = await fetch('http://localhost:8080/analyse-image', {
-          method: 'POST',
-          body: formData
-        });
-  
-        if (response.ok) {
-          const data = await response.json();
-          const resultId = data.resultId;
-  
-          // Redirect to result.html with resultId
-          window.location.href = `result.html?resultId=${encodeURIComponent(resultId)}`;
-        } else {
-          message.textContent = "Failed to process image.";
-          message.className = 'message error';
+              tbody.appendChild(row);
+            });
+          } catch (error) {
+            console.error("Error fetching previous results:", error);
+          }
         }
-      } catch (error) {
-        message.textContent = "Error: " + error.message;
-        message.className = 'message error';
+
+        // Call it once when the page loads
+        window.onload = fetchPreviousResults;
+      </script>
+
+
+
+
+
+    <script>
+      async function uploadImage() {
+        const input = document.getElementById("imageInput");
+        const message = document.getElementById("message");
+
+        if (input.files.length === 0) {
+          message.textContent = "Please select an image to upload.";
+          message.className = "message error";
+          return;
+        }
+
+        const selectedView = document.querySelector(
+          'input[name="viewType"]:checked'
+        ).value;
+        const formData = new FormData();
+        formData.append("file", input.files[0]);
+        formData.append("userId", "adityaanantjadhav@gmail.com"); // Replace with actual user if needed
+        formData.append("viewType", selectedView);
+
+        const token = localStorage.getItem("jwtToken");
+
+        try {
+          const response = await fetch("http://localhost:8080/analyse-image", {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: token,
+            },
+          });
+
+          if (response.status === 401) {
+            window.location.href = "/login.html"; // or wherever your login page is
+            return;
+          }
+
+          if (response.ok) {
+            const data = await response.json();
+            const resultId = data.resultId;
+
+            // Redirect to result.html with resultId
+            window.location.href = `result.html?resultId=${encodeURIComponent(
+              resultId
+            )}`;
+          } else {
+            message.textContent = "Failed to process image.";
+            message.className = "message error";
+          }
+        } catch (error) {
+          message.textContent = "Error: " + error.message;
+          message.className = "message error";
+        }
       }
-    }
-  </script>
+    </script>
   </body>
 </html>
+

@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Processed Image Result</title>
+    <title>Send Processed Results</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
-        background-color: #1e0101;
         background-image: url("static/backgroundimage.png");
+        background-color: #310101;
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -21,102 +21,95 @@
         padding: 20px;
         position: relative;
       }
-
       .back-button {
         position: absolute;
         top: 20px;
         left: 20px;
-        background-color: transparent;
+        background-color: rgb(54, 0, 0);
         border: 2px solid #00d4a6;
         color: #00d4a6;
         padding: 6px 12px;
         border-radius: 5px;
         font-size: 16px;
+        font-weight: 600;
         cursor: pointer;
       }
-
       h1 {
         margin-top: 80px;
         margin-bottom: 20px;
+        color: #00d4a6;
       }
-
       .container {
         display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: center;
         gap: 40px;
         flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 900px;
       }
-
-      .image-box {
+      .image-box,
+      .info-box {
         flex: 1;
         min-width: 300px;
       }
-
       .image-box img {
-        max-width: 100%;
+        width: 100%;
         max-height: 75vh;
         border: 2px solid #fff;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       }
-
       .info-box {
-        flex: 1;
-        min-width: 250px;
-        max-width: 400px;
         background: rgba(255, 255, 255, 0.1);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       }
-
       .info-box h2 {
         margin-top: 0;
       }
-
       .info-box p {
         font-size: 18px;
         line-height: 1.6;
       }
-
-      .info-box .condition-title {
+      .condition-title {
         font-size: large;
         font-weight: bold;
         margin-top: 18px;
         color: #00d4a6;
       }
-
-      .email-section,
-      .doctor-search {
+      .mail-section {
         margin-top: 40px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
       }
-
-      .email-section input,
-      .doctor-search input {
+      .mail-section h2 {
+        margin-top: 0;
+        color: #00d4a6;
+      }
+      .mail-section input {
+        width: calc(100% - 24px);
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
-        min-width: 250px;
+        margin-bottom: 16px;
       }
-
-      .email-section button,
-      .doctor-search button {
-        padding: 10px 16px;
+      .mail-section button {
+        margin: 8px 4px;
+        padding: 10px 20px;
         border-radius: 5px;
         background-color: #00d4a6;
-        color: black;
+        color: #000;
         border: none;
         font-weight: bold;
         cursor: pointer;
       }
-
+      /* keep your existing table styling for the prediction table */
       table {
         margin-top: 30px;
         border-collapse: collapse;
@@ -126,14 +119,12 @@
         color: #fff;
         border: 1px solid #ccc;
       }
-
       th,
       td {
         padding: 12px 16px;
         border-bottom: 1px solid #ddd;
         text-align: center;
       }
-
       th {
         background-color: rgba(0, 212, 166, 0.2);
         color: #00d4a6;
@@ -141,8 +132,8 @@
     </style>
   </head>
   <body>
-    <button class="back-button" onclick="window.location.href='index.html'">
-      ← Back
+    <button class="back-button" onclick="location.href='index.html'">
+      <b>←</b> Back
     </button>
 
     <h1>Processed Output</h1>
@@ -156,276 +147,137 @@
       </div>
     </div>
 
-    <!-- Email Sending Section -->
-    <div class="email-section">
+    <div class="mail-section">
+      <h2>Send Results</h2>
       <input
         type="email"
         id="emailInput"
         placeholder="Enter your email (gmail/yahoo/outlook)"
       />
-      <button onclick="sendEmail()">Send Result to Email</button>
+      <div>
+        <button onclick="sendEmail()">Send to My Email</button>
+        <button onclick="sendToDoctor()">Send to My Doctor</button>
+      </div>
     </div>
-
-    <!-- Doctor Search Section -->
-    <div class="doctor-search">
-      <input type="text" id="cityInput" placeholder="Search by city" />
-      <button onclick="searchByCity()">Search</button>
-
-      <input type="number" id="pincodeInput" placeholder="Search by pincode" />
-      <button onclick="searchByPincode()">Search</button>
-    </div>
-
-    <!-- Doctor Result Table -->
-    <table id="doctorTable" style="display: none">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>City</th>
-          <th>Pincode</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="doctorTableBody"></tbody>
-    </table>
 
     <script>
-      let resultId = null;
       const backendUrl = "http://localhost:8080";
+      let resultId = new URLSearchParams(window.location.search).get(
+        "resultId"
+      );
 
       async function fetchResult() {
-        const params = new URLSearchParams(window.location.search);
-        resultId = params.get("resultId");
         if (!resultId) return;
-
         const token = localStorage.getItem("jwtToken");
-        try {
-          const response = await fetch(`${backendUrl}/get-result/${resultId}`, {
-            headers: {
-              Authorization: token,
-            },
-          });
+        if (!token) return (location.href = "login.html");
 
-          if (response.status === 401) {
-            window.location.href = "/login.html"; // or wherever your login page is
-            return;
-          }
-          const data = await response.json();
-          async function loadImage() {
-            const token = localStorage.getItem("jwtToken");
-            const resp = await fetch(`${backendUrl}/get-image/${resultId}`, {
-              headers: { Authorization: token },
-            });
-            if (resp.status === 401) {
-              window.location.href = "/login.html";
-              return;
-            }
-            if (!resp.ok) {
-              console.error("Image load error", resp.status);
-              return;
-            }
-            const blob = await resp.blob();
-            // Create a temporary object URL and set it on the <img>
-            document.getElementById("outputImage").src =
-              URL.createObjectURL(blob);
-          }
+        const res = await fetch(`${backendUrl}/get-result/${resultId}`, {
+          headers: { Authorization: token },
+        });
+        if (res.status === 401) return (location.href = "login.html");
+        const data = await res.json();
 
-          // after you read resultId from the query string…
-          loadImage();
-          const container = document.getElementById("predictionInfo");
+        const imgResp = await fetch(`${backendUrl}/get-image/${resultId}`, {
+          headers: { Authorization: token },
+        });
+        if (imgResp.ok) {
+          const blob = await imgResp.blob();
+          document.getElementById("outputImage").src =
+            URL.createObjectURL(blob);
+        }
 
-          if (data.predictedConditions) {
-            for (const [condition, explanation] of Object.entries(
-              data.predictedConditions
-            )) {
-              const conditionHTML = `
-              <p class="condition-title">${condition}</p>
-              <p>${explanation}</p>
+        const container = document.getElementById("predictionInfo");
+        if (data.predictedConditions) {
+          for (let [cond, txt] of Object.entries(data.predictedConditions)) {
+            container.innerHTML += `
+              <p class="condition-title">${cond}</p>
+              <p>${txt}</p>
             `;
-              container.innerHTML += conditionHTML;
-            }
           }
+        }
+        
 
-          if (data.predictions && data.predictions.length > 0) {
-            const predictionTable = document.createElement("table");
-            predictionTable.style.marginTop = "20px";
-            predictionTable.innerHTML = `
-            <thead>
-              <tr>
-                <th>Label</th>
-                <th>Confidence</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.predictions
-                .map(
-                  (pred) => `
+        // ← replaced this block with a styled table insertion
+        if (data.predictions && data.predictions.length > 0) {
+          container.innerHTML += `
+            <table>
+              <thead>
                 <tr>
-                  <td>${pred.label}</td>
-                  <td>${(pred.confidence * 100).toFixed(2)}%</td>
+                  <th>Label</th>
+                  <th>Confidence</th>
                 </tr>
-              `
-                )
-                .join("")}
-            </tbody>
+              </thead>
+              <tbody>
+                ${data.predictions
+                  .map(
+                    (pred) => `
+                  <tr>
+                    <td>${pred.label}</td>
+                    <td>${(pred.confidence * 100).toFixed(2)}%</td>
+                  </tr>
+                `
+                  )
+                  .join("")}
+              </tbody>
+            </table>
           `;
-            container.appendChild(predictionTable);
-          }
-        } catch (err) {
-          alert("Failed to load result: " + err.message);
+        }
+
+        else{
+          container.innerHTML += `
+              <p class="condition-title">Nothing has been detected</p>
+            `;
         }
       }
 
       async function sendEmail() {
-        const email = document.getElementById("emailInput").value;
-        if (!email || !resultId) {
-          alert("Please enter a valid email.");
-          return;
-        }
-
+        const email = document.getElementById("emailInput").value.trim();
+        if (!email || !resultId) return alert("Please enter a valid email.");
+        const token = localStorage.getItem("jwtToken");
         try {
-          const formData = new URLSearchParams();
-          formData.append("email", email);
-          formData.append("resultId", resultId);
-
-          const token = localStorage.getItem("jwtToken");
-          const response = await fetch(`${backendUrl}/mail-results`, {
+          const body = new URLSearchParams({ email, resultId });
+          const res = await fetch(`${backendUrl}/mail-results`, {
             method: "POST",
             headers: {
               Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: formData.toString(),
+            body: body.toString(),
           });
-
-          if (response.status === 401) {
-            window.location.href = "/login.html"; // or wherever your login page is
-            return;
-          }
-
-          const text = await response.text();
-          alert(response.ok ? "✅ " + text : "❌ " + text);
-        } catch (err) {
-          alert("Error sending email: " + err.message);
+          if (res.status === 401) return (location.href = "login.html");
+          const txt = await res.text();
+          alert(res.ok ? `✅ ${txt}` : `❌ ${txt}`);
+        } catch (e) {
+          alert("Error sending email: " + e.message);
         }
       }
 
-      function displayDoctors(doctors) {
-        const table = document.getElementById("doctorTable");
-        const body = document.getElementById("doctorTableBody");
-        body.innerHTML = "";
-
-        if (doctors.length === 0) {
-          alert("No doctors found.");
-          table.style.display = "none";
-          return;
-        }
-
-        doctors.forEach((doc) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-          <td>${doc.name}</td>
-          <td>${doc.email}</td>
-          <td>${doc.city}</td>
-          <td>${doc.pincode}</td>
-          <td>
-            <button onclick="requestDoctor('${encodeURIComponent(
-              doc.email
-            )}', this)"
-                    style="padding:4px 8px; border:none; border-radius:4px; background:#00d4a6; color:#000; cursor:pointer;">
-              Request
-            </button>
-          </td>
-        `;
-          body.appendChild(row);
-        });
-
-        table.style.display = "table";
-      }
-
-      async function requestDoctor(doctorEmail, btn) {
+      async function sendToDoctor() {
+        if (!resultId) return;
         const token = localStorage.getItem("jwtToken");
-        if (!token) return (window.location.href = "login.html");
-
-        btn.disabled = true;
-        btn.textContent = "…Sending";
 
         try {
-          const resp = await fetch(
-            `${backendUrl}/request-doctor?doctorEmail=${doctorEmail}`,
+          const res = await fetch(
+            `${backendUrl}/mail-doctor-results?resultId=${resultId}`,
             {
               method: "POST",
-              headers: {
-                Authorization: token,
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
+              headers: { Authorization: token },
             }
           );
+          if (res.status === 401) return (location.href = "login.html");
 
-          if (resp.status === 401) {
-            return (window.location.href = "login.html");
+          // read body exactly once
+          const bodyText = await res.text();
+
+          // 204 No Content will come back with empty bodyText, too
+          if (res.status === 204 || (res.status === 200 && !bodyText.trim())) {
+            return alert("❌ No doctor is associated.");
           }
 
-          const text = await resp.text();
-          alert(resp.ok ? "✅ " + text : "❌ " + text);
-        } catch (err) {
-          alert("Error: " + err.message);
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Request";
-        }
-      }
-
-      async function searchByCity() {
-        const city = document.getElementById("cityInput").value.trim();
-        if (!city) return alert("Please enter a city name.");
-
-        try {
-          const token = localStorage.getItem("jwtToken");
-
-          const res = await fetch(
-            `${backendUrl}/get-doctors-city?city=${city}`,
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-
-          if (res.status === 401) {
-            window.location.href = "/login.html"; // or wherever your login page is
-            return;
-          }
-          const doctors = await res.json();
-          displayDoctors(doctors);
-        } catch (err) {
-          alert("Error fetching doctors by city: " + err.message);
-        }
-      }
-
-      async function searchByPincode() {
-        const pincode = document.getElementById("pincodeInput").value.trim();
-        if (!pincode) return alert("Please enter a pincode.");
-        const token = localStorage.getItem("jwtToken");
-
-        try {
-          const res = await fetch(
-            `${backendUrl}/get-doctors-pincode?pincode=${pincode}`,
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-
-          if (res.status === 401) {
-            window.location.href = "/login.html"; // or wherever your login page is
-            return;
-          }
-          const doctors = await res.json();
-          displayDoctors(doctors);
-        } catch (err) {
-          alert("Error fetching doctors by pincode: " + err.message);
+          // now you can safely alert the real response
+          alert(res.ok ? `✅ ${bodyText}` : `❌ ${bodyText}`);
+        } catch (e) {
+          alert("Error: " + e.message);
         }
       }
 

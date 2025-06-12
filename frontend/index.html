@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI-powered Disc Degeneration Analysis</title>
+    <!-- Update this path if your CSS is served from a different location -->
     <link rel="stylesheet" href="C:\yolo11\flask_app\static\styles1.css" />
     <style>
       * {
@@ -14,22 +15,15 @@
 
       body {
         font-family: "Arial", sans-serif;
-        /* height: 100vh; */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        /* background: linear-gradient(120deg, #000428, #004e92);*/
-        /* background-image: url('https://t4.ftcdn.net/jpg/08/99/10/13/360_F_899101367_KNplABXUOJ0XEcXci30BGXu3NildSzrW.jpg');
-background-repeat: no-repeat;
-background-size: cover;
-color: #fff; */
         background-color: #1e0101;
       }
 
       .outerbox {
         font-family: "Arial", sans-serif;
-        height: auto;
         min-height: 100vh;
         width: 100%;
         display: flex;
@@ -44,41 +38,69 @@ color: #fff; */
         color: #1e0101;
       }
 
+      /* ---------- UPDATED HEADER STYLES ---------- */
       .header {
-        text-align: center;
-        padding: 20px 0;
-        background: rgba(0, 0, 0, 0.8);
         width: 100%;
+        background: rgba(0, 0, 0, 0.8);
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Title on left, links on right */
+        padding: 10px 20px;
       }
 
       .project-title {
-        font-size: 48px;
+        font-size: 36px;
         color: #ffcc00;
         text-transform: uppercase;
         letter-spacing: 2px;
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
       }
 
+      .nav-links {
+  margin-left: auto;
+  display: flex;
+  gap: 20px; /* spacing between links */
+}
+
+/* Updated CSS */
+.header {
+  display: flex;
+  justify-content: space-between; /* Ensures maximum separation */
+  align-items: center;
+}
+
+/* Remove margin-left:auto */
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+/* Optional: Add right padding for breathing room */
+.header {
+  padding: 10px 5% 10px 20px; /* 5% right padding */
+}
+
+      /* Container for role-based nav links */
+      .nav-links a {
+        color: #ffcc00;
+        margin-left: 20px;
+        font-size: 18px;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: #ffffff;
+      }
+      /* --------------------------------------------- */
+
       .content-section {
         margin-bottom: 50px;
-        /* Remove flex-grow if exists */
-        flex-grow: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         position: relative;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(-50%) translateX(0);
-        }
-        50% {
-          transform: translateY(-60%) translateX(5px);
-        }
       }
 
       .container {
@@ -92,15 +114,12 @@ color: #fff; */
         max-width: 480px;
         width: 90%;
         z-index: 2;
-        /* transform: translateY(-15%); Reduced initial upward translation   */
         transform: none;
         margin-top: 40px;
       }
 
       .container:hover {
-        transform: translateY(
-          -13%
-        ); /* Brings it back to its original position smoothly */
+        transform: translateY(-3%);
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
       }
 
@@ -111,10 +130,8 @@ color: #fff; */
         margin-bottom: 20px;
         font-size: 24px;
         color: #e9b3b3;
-        text-shadow: -1.5px -1.5px 0 #200101,
-          /* Top-left shadow */ 1.5px -1.5px 0 #200101,
-          /* Top-right shadow */ -1.5px 1.5px 0 #200101,
-          /* Bottom-left shadow */ 1.5px 1.5px 0 #200101; /* Bottom-right shadow */
+        text-shadow: -1.5px -1.5px 0 #200101, 1.5px -1.5px 0 #200101,
+          -1.5px 1.5px 0 #200101, 1.5px 1.5px 0 #200101;
       }
 
       .container input[type="file"] {
@@ -129,7 +146,6 @@ color: #fff; */
         transition: border-color 0.3s ease;
         cursor: pointer;
       }
-
       .container input[type="file"]:hover {
         border-color: #00ffcc;
       }
@@ -147,7 +163,6 @@ color: #fff; */
         transition: transform 0.2s ease, background-color 0.3s ease;
         width: 100%;
       }
-
       .container button:hover {
         background-color: #00d4a6;
         transform: scale(1.05);
@@ -157,16 +172,13 @@ color: #fff; */
         margin-top: 15px;
         font-size: 20px;
         font-weight: bold;
-        color: white; /* Adjust based on your background for contrast */
-        text-shadow: -1px -1px 0 #000, /* Top-left shadow */ 1px -1px 0 #000,
-          /* Top-right shadow */ -1px 1px 0 #000,
-          /* Bottom-left shadow */ 1px 1px 0 #000; /* Bottom-right shadow */
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+          1px 1px 0 #000;
       }
-
       .message.success {
         color: #7cdc92;
       }
-
       .message.error {
         color: #dd4353;
       }
@@ -175,27 +187,25 @@ color: #fff; */
         .project-title {
           font-size: 28px;
         }
-
         .container {
           padding: 20px;
         }
-
         .brain {
           width: 80px;
           height: 80px;
         }
       }
 
-      /* new code */
+      /* ---------- RESULTS SECTION ---------- */
       #imageResult img {
-        max-width: 100%; /* Ensure the image fits within the container */
-        height: 500px; /* Set a maximum height for uniformity */
+        max-width: 100%;
+        height: 500px;
         display: block;
-        margin: 0 auto; /* Center the image within the container */
-        object-fit: contain; /* Maintain the aspect ratio while ensuring it fits */
-        border: 2px solid #fff; /* Optional: Add a border for styling */
-        border-radius: 10px; /* Optional: Add rounded corners */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: Add shadow for better aesthetics */
+        margin: 0 auto;
+        object-fit: contain;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       }
 
       .output_title {
@@ -205,22 +215,14 @@ color: #fff; */
       }
 
       .container_output {
-        border-top: 10px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(20px);
         padding: 20px 30px 40px 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        /* max-width: 480px;  */
-        width: 60%;
-        /* z-index: 2; */
-        transform: none;
         width: 80%;
-        margin: 0 auto 50px; /* Center and add bottom margin */
-        /* Add some transparency */
-        background: rgba(255, 255, 255, 0.05);
+        margin: 0 auto 50px;
       }
 
       .container .radios {
@@ -228,44 +230,57 @@ color: #fff; */
         font-size: larger;
         font-weight: 400;
         padding: 6px;
-
-        label {
-          margin: 0px 55px;
-        }
       }
-
       #resultsTable tbody tr {
         cursor: pointer;
         transition: background-color 0.3s;
       }
-
       #resultsTable tbody tr:hover {
         background-color: rgba(255, 255, 255, 0.1);
       }
+      /* -------------------------------------- */
+
+      .header .title-container {
+        display: flex;
+        align-items: center;
+      }
+      .spine-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
     </style>
   </head>
+
   <body>
     <div class="outerbox">
-      <header class="header">
-        <div class="title-container">
-          <h1 class="project-title">Lumbar Disc Degeneration Analysis</h1>
-        </div>
-      </header>
+      <!-- ========== UPDATED HEADER ========== -->
+      <!-- Updated Header Structure -->
+<header class="header">
+  <div class="title-container">
+    <img src="static/orthopedics.png" alt="Spine Icon" class="spine-icon" />
+    <h1 class="project-title">SPINOSCAN</h1>
+  </div>
+  <!-- Single nav-links container with unique ID -->
+  <div id="navLinksContainer" class="nav-links"></div>
+</header>
+      <!-- ===================================== -->
+
       <section class="content-section">
         <div class="brain left-brain"></div>
         <div class="container">
           <h2>Upload Your Lumbar MRI</h2>
-          <input type="file" id="imageInput" accept="image/*" />
+          <input type="file" id="imageInput"  />
 
           <!-- Radio buttons -->
           <div class="radios">
             <label>
               <input type="radio" name="viewType" value="sagittal" checked />
-              Sagittal
+              <b>Sagittal</b>
             </label>
             <label>
               <input type="radio" name="viewType" value="axial" />
-              Axial
+              <b>Axial</b>
             </label>
           </div>
 
@@ -274,137 +289,122 @@ color: #fff; */
         </div>
         <div class="brain right-brain"></div>
       </section>
-      <!-- Add this inside your <body> just below the container div in content-section -->
-
-      <div class="container_output" id="resultsSection">
-        <div class="output_title">Previous Results</div>
-        <table
-          id="resultsTable"
-          style="
-            width: 100%;
-            color: white;
-            font-size: 18px;
-            border-collapse: collapse;
-          "
-        >
-          <thead>
-            <tr style="background-color: rgba(0, 0, 0, 0.4)">
-              <th style="padding: 10px; border-bottom: 1px solid #ccc">
-                Index
-              </th>
-              <th style="padding: 10px; border-bottom: 1px solid #ccc">Date</th>
-              <th style="padding: 10px; border-bottom: 1px solid #ccc">Time</th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody">
-            <!-- JavaScript will populate rows here -->
-          </tbody>
-        </table>
-      </div>
-
-      <script>
-        const userEmail = "adityaanantjadhav@gmail.com"; // You may dynamically fetch this later
-
-        async function fetchPreviousResults() {
-          const token = localStorage.getItem("jwtToken");
-          try {
-            const response = await fetch(
-              `http://localhost:8080/get-previous-results`,{
-              method: "GET",
-              headers: {
-                "Authorization": token,
-              }
-            });
-            if (response.status === 401) {
-              window.location.href = "/login.html"; // or wherever your login page is
-              return;
-            }
-
-            if (!response.ok) {
-              console.error("Failed to fetch previous results");
-              return;
-            }
-
-            const results = await response.json();
-            const tbody = document.getElementById("resultsBody");
-            tbody.innerHTML = "";
-
-            results.forEach((result, index) => {
-              const dateTime = new Date(result.timestamp);
-              const date = dateTime.toLocaleDateString();
-              const time = dateTime.toLocaleTimeString();
-
-              const row = document.createElement("tr");
-              // Store the result ID in a data attribute
-              row.dataset.resultId = result.resultId;
-
-              row.innerHTML = `
-          <td style="padding: 10px; text-align: center;">${index + 1}</td>
-          <td style="padding: 10px; text-align: center;">${date}</td>
-          <td style="padding: 10px; text-align: center;">${time}</td>
-        `;
-
-              // Add click event listener
-              row.addEventListener("click", function () {
-                window.location.href = `result.html?resultId=${encodeURIComponent(
-                  result.resultId
-                )}`;
-              });
-
-              tbody.appendChild(row);
-            });
-          } catch (error) {
-            console.error("Error fetching previous results:", error);
-          }
-        }
-
-        // Call it once when the page loads
-        window.onload = fetchPreviousResults;
-      </script>
     </div>
 
+    <!-- ========== Previous Results Section ========== -->
+    <div class="container_output" id="resultsSection">
+      <div class="output_title"><b>Previous Results</b></div>
+      <table
+        id="resultsTable"
+        style="
+          width: 100%;
+          color: white;
+          font-size: 18px;
+          border-collapse: collapse;
+        "
+      >
+        <thead>
+          <tr style="background-color: rgba(0, 0, 0, 0.4)">
+            <th style="padding: 10px; border-bottom: 1px solid #ccc">Index</th>
+            <th style="padding: 10px; border-bottom: 1px solid #ccc">Date</th>
+            <th style="padding: 10px; border-bottom: 1px solid #ccc">Time</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <!-- JS will populate rows here -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ========== Scripts ========== -->
     <script>
+      const userEmail = "adityaanantjadhav@gmail.com"; // unused here, but you can fetch dynamically
+
+      // Fetch previous results and populate the table
+      async function fetchPreviousResults() {
+        const token = localStorage.getItem("jwtToken");
+        try {
+          const response = await fetch(
+            `http://localhost:8080/get-previous-results`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: token,
+              },
+            }
+          );
+          if (response.status === 401) {
+            window.location.href = "/login.html";
+            return;
+          }
+          if (!response.ok) {
+            console.error("Failed to fetch previous results");
+            return;
+          }
+          const results = await response.json();
+          const tbody = document.getElementById("resultsBody");
+          tbody.innerHTML = "";
+          results.forEach((result, index) => {
+            const dateTime = new Date(result.timestamp);
+            const date = dateTime.toLocaleDateString();
+            const time = dateTime.toLocaleTimeString();
+            const row = document.createElement("tr");
+            row.dataset.resultId = result.resultId;
+            row.innerHTML = `
+              <td style="padding: 10px; text-align: center;">${index + 1}</td>
+              <td style="padding: 10px; text-align: center;">${date}</td>
+              <td style="padding: 10px; text-align: center;">${time}</td>
+            `;
+            row.addEventListener("click", function () {
+              window.location.href = `result.html?resultId=${encodeURIComponent(
+                result.resultId
+              )}`;
+            });
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching previous results:", error);
+        }
+      }
+
+      // Call it once when the page loads
+      window.onload = () => {
+        fetchPreviousResults();
+        populateNavLinks(); // new function to load role-based links
+      };
+
+      // Upload image and redirect to result page
       async function uploadImage() {
         const input = document.getElementById("imageInput");
         const message = document.getElementById("message");
-
         if (input.files.length === 0) {
           message.textContent = "Please select an image to upload.";
           message.className = "message error";
           return;
         }
-
         const selectedView = document.querySelector(
           'input[name="viewType"]:checked'
         ).value;
         const formData = new FormData();
         formData.append("file", input.files[0]);
-        formData.append("userId", "adityaanantjadhav@gmail.com"); // Replace with actual user if needed
+        formData.append("userId", "adityaanantjadhav@gmail.com");
         formData.append("viewType", selectedView);
-
-
         const token = localStorage.getItem("jwtToken");
-
         try {
           const response = await fetch("http://localhost:8080/analyse-image", {
             method: "POST",
             body: formData,
             headers: {
-              "Authorization": token,
-            }
+              Authorization: token,
+            },
           });
-          
           if (response.status === 401) {
-              window.location.href = "/login.html"; // or wherever your login page is
-              return;
+            window.location.href = "/login.html";
+            return;
           }
-
-
           if (response.ok) {
             const data = await response.json();
             const resultId = data.resultId;
-
-            // Redirect to result.html with resultId
             window.location.href = `result.html?resultId=${encodeURIComponent(
               resultId
             )}`;
@@ -417,6 +417,62 @@ color: #fff; */
           message.className = "message error";
         }
       }
+
+      // ---------- NEW: Populate nav links based on /is-doctor ----------
+      async function populateNavLinks() {
+        const token = localStorage.getItem("jwtToken");
+        if (!token) {
+          // If no token, you might redirect to login or show no links
+          return;
+        }
+
+        try {
+          // Call your Spring endpoint
+          const response = await fetch("http://localhost:8080/is-doctor", {
+            method: "GET",
+            headers: {
+              Authorization: token,
+            },
+          });
+          if (response.status === 401) {
+            window.location.href = "/login.html";
+            return;
+          }
+          const isDoctor = await response.json(); // should be boolean
+
+          // Update JavaScript selector
+const navContainer = document.getElementById("navLinksContainer");
+          navContainer.innerHTML = ""; // clear existing
+
+          // Common “Previous History” link (anchor to #resultsSection)
+          const prevHistoryLink = document.createElement("a");
+          prevHistoryLink.href = "#resultsSection";
+          prevHistoryLink.textContent = "Previous History";
+          navContainer.appendChild(prevHistoryLink);
+
+          if (isDoctor) {
+            // Doctor-specific links
+            const patientListLink = document.createElement("a");
+            patientListLink.href = "PatientList.html";
+            patientListLink.textContent = "Patient List";
+            navContainer.appendChild(patientListLink);
+
+            const requestsLink = document.createElement("a");
+            requestsLink.href = "PatientRequest.html";
+            requestsLink.textContent = "Requests";
+            navContainer.appendChild(requestsLink);
+          } else {
+            // Patient-specific links
+            const searchDoctorsLink = document.createElement("a");
+            searchDoctorsLink.href = "SearchDoctor.html";
+            searchDoctorsLink.textContent = "Search Doctors";
+            navContainer.appendChild(searchDoctorsLink);
+          }
+        } catch (error) {
+          console.error("Error checking role:", error);
+        }
+      }
+      // ---------------------------------------------------------------
     </script>
   </body>
 </html>
